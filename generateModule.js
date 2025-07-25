@@ -1,9 +1,22 @@
 import { GoogleGenAI, Modality } from '@google/genai';
 import * as fs from 'node:fs';
 import 'dotenv/config';
+
+const ai = new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
+
+export async function generateText(prompt){
+  console.log(prompt, 'text');
+  const response = await ai.models.generateContent({
+    model:"gemini-2.5-flash",
+    contents: prompt
+  });
+  console.log(response);
+  console.log(response.text);
+  return response.text;
+}
+
 export async function generateImg(prompt){
-  console.log(prompt);
-  const ai = new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
+  console.log(prompt, 'image');
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash-preview-image-generation",
     contents: prompt,
