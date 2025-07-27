@@ -43,7 +43,7 @@ app.post('/api/img/gen', async(req, res) => {
     const member = req.body;
     generateImg(member.prompt);
     res.send({result: 1});
-  }catch{
+  }catch(error){
     console.log(error);
     res.status(500);
   }

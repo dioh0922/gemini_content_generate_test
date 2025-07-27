@@ -1,3 +1,4 @@
 /node_modules
 .env
 gemini-generate.png
+/generate
