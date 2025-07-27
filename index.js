@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'test';
-const { generateImg, generateText } = require('./generateModule');
+const { generateImg, generateText, generateAudio } = require('./generateModule');
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -48,6 +48,15 @@ app.post('/api/img/gen', async(req, res) => {
     res.status(500);
   }
 });
+
+app.get('/api/voice/gen', async(req, res) => {
+  try{
+    generateAudio('女性: テスト音声です');
+  }catch(error){
+    console.log(error);
+    res.status(500);
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`${APP_NAME}`);
