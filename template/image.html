@@ -16,6 +16,11 @@
       <textarea name="prompt"></textarea>
       <button type="submit">生成</button>
     </form>
+    <div>
+      <% images.forEach(function(image){ %>
+        <img src="/generate/img/<%=image %>" alt="<%=image %>" width="20%">
+      <% }); %>
+    </div>
   </div>
 </body>
 </html>

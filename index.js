@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'test';
@@ -9,14 +10,27 @@ const { generateImg, generateText, generateAudio } = require('./generateModule')
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'template')));
+//app.use(express.static(path.join(__dirname, 'template')));
+
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, 'template'));
+app.use('/generate', express.static('generate'));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'template', 'index.html'));
 });
 
-app.get('/img', (req, res) => {
-  res.sendFile(path.join(__dirname, 'template', 'image.html'));
+app.get('/img', (req, res, next) => {
+  const imageDir = path.join(__dirname, 'generate/img');
+  fs.readdir(imageDir, (err, files) => {
+    if(err){
+      console.log(err);
+      return next(err);
+    }
+    const imageFiles = files.filter(file => ['.png'].includes(path.extname(file).toLowerCase()));
+    res.render('image.html', {images: imageFiles});
+  });
 });
 
 app.get('/api/text/gen', async(req, res) => {

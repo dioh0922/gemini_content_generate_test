@@ -10,7 +10,7 @@ const ai = new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
 export async function generateText(prompt){
   console.log(prompt, 'text');
   const response = await ai.models.generateContent({
-    model:"gemini-2.5-flash",
+    model:'gemini-2.5-flash',
     contents: prompt
   });
   console.log(response.text);
@@ -20,8 +20,8 @@ export async function generateText(prompt){
 export async function generateImg(prompt){
   console.log(prompt, 'image');
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-preview-image-generation",
-    contents: prompt,
+    model: 'gemini-2.0-flash-preview-image-generation',
+    contents: '以下の画像を作って\n' + prompt,
     config: {
       responseModalities: [Modality.TEXT, Modality.IMAGE],
     },
@@ -78,6 +78,7 @@ function writeGeneratedImg(bin){
     fs.mkdirSync(imgDir, {recursive: true});
   }
   fs.writeFileSync(filePath, bin);
+  console.log('save', filePath);
 }
 
 function writeGenerateAudio(bin){
