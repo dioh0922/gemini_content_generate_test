@@ -9,23 +9,30 @@ const ai = new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
 
 export async function generateText(prompt){
   console.log(prompt, 'text');
-  const response = await ai.models.generateContent({
+
+  const promptConfig = {
     model:'gemini-2.5-flash',
     contents: prompt
-  });
+  };
+  checkToken(promptConfig);
+  const response = await ai.models.generateContent(promptConfig);
   console.log(response.text);
   return response.text;
 }
 
 export async function generateImg(prompt){
   console.log(prompt, 'image');
-  const response = await ai.models.generateContent({
+  const promptConfig = {
     model: 'gemini-2.0-flash-preview-image-generation',
     contents: '以下の画像を作って\n' + prompt,
     config: {
       responseModalities: [Modality.TEXT, Modality.IMAGE],
     },
-  });
+  };
+
+  checkToken(promptConfig);
+
+  const response = await ai.models.generateContent(promptConfig);
 
   for(const part of response.candidates[0].content.parts){
     if(part.text){
@@ -39,8 +46,9 @@ export async function generateImg(prompt){
   }
 }
 
-export async function generateAudio(prompt){
-  const response = await ai.models.generateContent({
+export async function generateVoice(prompt){
+  console.log(prompt);
+  const promptConfig = {
     model: 'gemini-2.5-flash-preview-tts',
     contents: [{parts: [{text: prompt}]}],
     config:{
@@ -51,11 +59,24 @@ export async function generateAudio(prompt){
         },
       },
     },
-  });
+  };
+  checkToken(promptConfig);
 
-  const data = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  const audioBuffer = Buffer.from(data, 'base64');
-  writeGenerateAudio(audioBuffer);
+  const response = await ai.models.generateContent(promptConfig);
+
+  const finishReason = response.candidates?.[0];
+  const inlineData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+  console.log(finishReason);
+  if(!inlineData){
+    console.log('success' + inlineData.mineType);
+    const audioBuffer = Buffer.from(inlineData?.data, 'base64');
+    writeGeneratedVoice(audioBuffer);
+  }
+}
+
+async function checkToken(promptConfig){
+  const token = await ai.models.countTokens(promptConfig);
+  console.log(token);
 }
 
 function createTimestampStr(){
@@ -81,10 +102,15 @@ function writeGeneratedImg(bin){
   console.log('save', filePath);
 }
 
-function writeGenerateAudio(bin){
-  const audioDir = 'generate/audio/';
+function writeGeneratedVoice(bin){
+  writeGenerateAudio(bin, 'voice');
+}
+
+function writeGenerateAudio(bin, dirType){
+  const audioDir = 'generate/audio' + (dirType ? `/${dirType}/` : '/');
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const filePath = path.join(__dirname, audioDir + createTimestampStr() + '.wav');
+  console.log(filePath);
   if(!fs.existsSync(audioDir)){
     fs.mkdirSync(audioDir, {recursive: true});
   }
