@@ -67,7 +67,7 @@ export async function generateVoice(prompt){
   const finishReason = response.candidates?.[0];
   const inlineData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
   console.log(finishReason);
-  if(!inlineData){
+  if(inlineData != void 0){
     console.log('success' + inlineData.mineType);
     const audioBuffer = Buffer.from(inlineData?.data, 'base64');
     writeGeneratedVoice(audioBuffer);

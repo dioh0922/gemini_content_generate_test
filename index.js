@@ -88,7 +88,7 @@ app.get('/api/voice/gen', async(req, res) => {
 app.post('/api/voice/gen', async(req, res) => {
   try{
     const member = req.body;
-    generateVoice(member);
+    generateVoice(member.prompt);
     res.send({result: 1});
   }catch(error){
     console.log(error);

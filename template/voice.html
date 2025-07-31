@@ -18,7 +18,7 @@
     </form>
     <div>
       <% voices.forEach(function(file){ %>
-        <audio controls="/generate/audio/voice/<%=file %>" >
+        <audio controls src="/generate/audio/voice/<%=file %>"></audio>
       <% }); %>
     </div>
   </div>
