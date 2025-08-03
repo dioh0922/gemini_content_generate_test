@@ -18,6 +18,10 @@
   "homepage": "https://github.com/dioh0922/gemini_content_generate_test#readme",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "@google/genai": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "wav": "^1.0.2"
   }
 }
